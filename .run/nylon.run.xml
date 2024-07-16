@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="nylon" type="JarApplication">
+    <option name="JAR_PATH" value="$USER_HOME$/Downloads/qiqibaba/starelams/nylon/nylon-paperclip-mojmap.jar"/>
+    <option name="VM_PARAMETERS" value="-Ddisable.watchdog=true"/>
+    <option name="PROGRAM_PARAMETERS" value="-nogui"/>
+    <option name="WORKING_DIRECTORY" value="C:\Users\15425\Downloads\qiqibaba\starelams\nylon"/>
+    <option name="ALTERNATIVE_JRE_PATH"/>
+    <module name="Starock.geyser"/>
+    <method v="2"/>
+  </configuration>
+</component>

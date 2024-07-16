@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 
 public class PluginMessageManager implements PluginMessageListener {
-    private static final String PB_CHANNEL = "playerbalancer:main",
+    public static final String PB_CHANNEL = "playerbalancer:main",
             BC_CHANNEL = "bungeecord:main";
 
     private final Multimap<MessageContext, Consumer<ByteArrayDataInput>> contexts = LinkedHashMultimap.create();

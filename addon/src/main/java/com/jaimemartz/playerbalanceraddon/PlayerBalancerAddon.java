@@ -4,6 +4,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.jaimemartz.playerbalanceraddon.util.ConfigurationFile;
 import lombok.Getter;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.BufferedReader;
@@ -13,7 +17,7 @@ import java.net.URL;
 import java.util.logging.Level;
 
 @Getter
-public class PlayerBalancerAddon extends JavaPlugin {
+public class PlayerBalancerAddon extends JavaPlugin implements Listener {
     private PluginMessageManager manager;
     private PlayerBalancerPlaceholderExpansion expansion;
     private ConfigurationFile config;
@@ -23,12 +27,19 @@ public class PlayerBalancerAddon extends JavaPlugin {
     public void onEnable() {
         config = new ConfigurationFile(this, "config.yml");
         manager = new PluginMessageManager(this);
+        getServer().getPluginManager().registerEvents(this, this);
+
         getCommand("spb").setExecutor(new MainCommand(this));
         updateCheck();
         if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             expansion = new PlayerBalancerPlaceholderExpansion(this);
             expansion.register();
         }
+    }
+
+    @EventHandler
+    public void onLogin(PlayerLoginEvent event) {
+        ((CraftPlayer) event.getPlayer()).addChannel(PluginMessageManager.PB_CHANNEL);
     }
 
     public void updateCheck() {
@@ -76,6 +87,7 @@ public class PlayerBalancerAddon extends JavaPlugin {
             return;
         }
     }
+
     public PluginMessageManager getManager() {
         return manager;
     }
