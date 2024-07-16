@@ -10,11 +10,15 @@ plugins {
 dependencies {
     api(libs.org.spongepowered.configurate.hocon)
     api(libs.org.bstats.bstats.velocity)
-    compileOnly("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
-    annotationProcessor("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
     compileOnly(libs.com.google.guava.guava)
     compileOnly(libs.com.google.inject.guice)
     compileOnly(libs.com.imaginarycode.minecraft.redisbungee)
+    compileOnly(libs.com.velocitypowered.velocity.api.x1)
+    annotationProcessor(libs.com.velocitypowered.velocity.api.x1)
+}
+
+tasks.shadowJar{
+    relocate("org.bstats","com.jaimemartz.playerbalancer.velocity")
 }
 
 description = "PlayerBalancer Velocity"

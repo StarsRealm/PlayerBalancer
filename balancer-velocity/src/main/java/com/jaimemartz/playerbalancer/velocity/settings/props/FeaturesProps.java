@@ -7,8 +7,9 @@ import com.jaimemartz.playerbalancer.velocity.settings.props.features.Permission
 import com.jaimemartz.playerbalancer.velocity.settings.props.features.ServerCheckerProps;
 import com.jaimemartz.playerbalancer.velocity.settings.props.features.ServerRefreshProps;
 import lombok.Data;
-import ninja.leaping.configurate.objectmapping.Setting;
-import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Setting;
+
 
 @ConfigSerializable
 @Data

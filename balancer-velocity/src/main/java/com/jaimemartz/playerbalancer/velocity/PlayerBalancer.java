@@ -32,12 +32,12 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
 import lombok.Getter;
-import ninja.leaping.configurate.commented.CommentedConfigurationNode;
-import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
-import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.bstats.charts.SingleLineChart;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
+import org.spongepowered.configurate.CommentedConfigurationNode;
+import org.spongepowered.configurate.hocon.HoconConfigurationLoader;
+import org.spongepowered.configurate.loader.ConfigurationLoader;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -171,7 +171,7 @@ public class PlayerBalancer {
         }
 
         if (loader == null) {
-            loader = HoconConfigurationLoader.builder().setFile(file).build();
+            loader = HoconConfigurationLoader.builder().file(file).build();
         }
 
         try {
@@ -184,8 +184,7 @@ public class PlayerBalancer {
             commandManager.register(mainCommandMeta, mainCommand);
 
             CommentedConfigurationNode node = loader.load();
-            settings = node.getValue(TypeToken.of(SettingsHolder.class));
-
+            settings = node.get(io.leangen.geantyref.TypeToken.get(SettingsHolder.class));
             if (settings.getGeneralProps().isEnabled()) {
                 if (settings.getGeneralProps().isAutoReload()) {
                     reloadListener = new ProxyReloadListener(this);

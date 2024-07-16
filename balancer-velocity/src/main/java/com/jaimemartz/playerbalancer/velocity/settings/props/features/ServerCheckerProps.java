@@ -2,8 +2,9 @@ package com.jaimemartz.playerbalancer.velocity.settings.props.features;
 
 import com.jaimemartz.playerbalancer.velocity.ping.PingTactic;
 import lombok.Data;
-import ninja.leaping.configurate.objectmapping.Setting;
-import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Setting;
+
 
 import java.util.List;
 

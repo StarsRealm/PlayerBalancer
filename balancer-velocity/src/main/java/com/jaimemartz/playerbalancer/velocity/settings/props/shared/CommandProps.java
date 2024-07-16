@@ -1,8 +1,9 @@
 package com.jaimemartz.playerbalancer.velocity.settings.props.shared;
 
 import lombok.Data;
-import ninja.leaping.configurate.objectmapping.Setting;
-import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Setting;
+
 
 import java.util.Collections;
 import java.util.List;
