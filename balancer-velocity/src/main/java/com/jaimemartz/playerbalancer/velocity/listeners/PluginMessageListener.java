@@ -277,7 +277,7 @@ public class PluginMessageListener {
                             server.getPlayersConnected().forEach(p -> allPlayers.put(p.getUsername(), p));
                         }
 
-                        int startIndex = (page - 1) * size;
+                        int startIndex = page * size;
                         int endIndex = startIndex + size;
                         endIndex = Math.min(endIndex, allPlayers.size());
                         List<Map.Entry<String, Player>> entries = new ArrayList<>(allPlayers.sequencedEntrySet());
