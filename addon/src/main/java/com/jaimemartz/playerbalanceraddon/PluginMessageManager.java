@@ -9,16 +9,13 @@ import com.google.common.io.ByteStreams;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 
 public class PluginMessageManager implements PluginMessageListener {
     private static final String PB_CHANNEL = "playerbalancer:main",
-                                BC_CHANNEL = "bungeecord:main";
+            BC_CHANNEL = "bungeecord:main";
 
     private final Multimap<MessageContext, Consumer<ByteArrayDataInput>> contexts = LinkedHashMultimap.create();
     private final PlayerBalancerAddon plugin;
@@ -211,6 +208,33 @@ public class PluginMessageManager implements PluginMessageListener {
 
         return true;
     }
+
+    public boolean getAllPlayer(Consumer<List<String>> consumer) {
+        Player player = Iterables.getFirst(plugin.getServer().getOnlinePlayers(), null);
+        if (player == null) {
+            return false;
+        }
+
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF("GetAllPlayer");
+
+        contexts.put(new MessageContext(
+                PB_CHANNEL,
+                "GetAllPlayer",
+                player.getUniqueId()
+        ), (response) -> {
+            int size = response.readInt();
+            List<String> names = new ArrayList<>(size);
+            for (int j = 0; j < size; j++) {
+                names.add(response.readUTF());
+            }
+            consumer.accept(names);
+        });
+
+        player.sendPluginMessage(plugin, PB_CHANNEL, out.toByteArray());
+        return true;
+    }
+
 
     private static final class MessageContext {
         private final String channel;
