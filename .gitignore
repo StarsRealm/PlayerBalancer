@@ -8,3 +8,7 @@ dependency-reduced-pom.xml
 *~
 libs/
 /.gradle/
+/buildSrc/build/
+/buildSrc/.gradle/
+/balancer-velocity/build/
+/addon/build/
