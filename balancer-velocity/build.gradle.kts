@@ -10,7 +10,8 @@ plugins {
 dependencies {
     api(libs.org.spongepowered.configurate.hocon)
     api(libs.org.bstats.bstats.velocity)
-    compileOnly(libs.com.velocitypowered.velocity.api)
+    compileOnly("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
+    annotationProcessor("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
     compileOnly(libs.com.google.guava.guava)
     compileOnly(libs.com.google.inject.guice)
     compileOnly(libs.com.imaginarycode.minecraft.redisbungee)
