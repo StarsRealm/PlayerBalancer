@@ -4,6 +4,7 @@
 
 plugins {
     id("buildlogic.java-conventions")
+    id("io.github.goooler.shadow") version "8.1.7"
 }
 
 dependencies {
