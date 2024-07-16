@@ -14,17 +14,6 @@
 
     <name>PlayerBalancerAddon</name>
 
-    <distributionManagement>
-        <repository>
-            <id>AliYun-Release</id>
-            <url>https://packages.aliyun.com/maven/repository/2421751-snapshot-i7Aufp/</url>
-        </repository>
-        <snapshotRepository>
-            <id>AliYun-Snapshot</id>
-            <url>https://packages.aliyun.com/maven/repository/2421751-snapshot-i7Aufp/</url>
-        </snapshotRepository>
-    </distributionManagement>
-    
     <repositories>
         <repository>
             <id>spigot-repo</id>

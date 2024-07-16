@@ -209,7 +209,7 @@ public class PluginMessageManager implements PluginMessageListener {
         return true;
     }
 
-    public boolean getAllPlayer(Consumer<List<String>> consumer) {
+    public boolean getAllPlayer(int page, int size, Consumer<List<String>> consumer) {
         Player player = Iterables.getFirst(plugin.getServer().getOnlinePlayers(), null);
         if (player == null) {
             return false;
@@ -217,15 +217,17 @@ public class PluginMessageManager implements PluginMessageListener {
 
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("GetAllPlayer");
-
+        out.writeInt(page);
+        out.writeInt(size);
+        
         contexts.put(new MessageContext(
                 PB_CHANNEL,
                 "GetAllPlayer",
                 player.getUniqueId()
         ), (response) -> {
-            int size = response.readInt();
-            List<String> names = new ArrayList<>(size);
-            for (int j = 0; j < size; j++) {
+            int lSize = response.readInt();
+            List<String> names = new ArrayList<>(lSize);
+            for (int j = 0; j < lSize; j++) {
                 names.add(response.readUTF());
             }
             consumer.accept(names);

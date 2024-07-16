@@ -9,6 +9,17 @@
     <version>2.3.6</version>
     <packaging>pom</packaging>
 
+    <distributionManagement>
+        <repository>
+            <id>AliYun-Release</id>
+            <url>https://packages.aliyun.com/maven/repository/2421751-snapshot-i7Aufp/</url>
+        </repository>
+        <snapshotRepository>
+            <id>AliYun-Snapshot</id>
+            <url>https://packages.aliyun.com/maven/repository/2421751-snapshot-i7Aufp/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <modules>
         <module>balancer</module>
         <module>balancer-velocity</module>

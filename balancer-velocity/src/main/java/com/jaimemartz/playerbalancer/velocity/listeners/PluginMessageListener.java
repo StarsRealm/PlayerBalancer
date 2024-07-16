@@ -20,10 +20,7 @@ import com.velocitypowered.api.proxy.server.ServerInfo;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class PluginMessageListener {
@@ -273,15 +270,29 @@ public class PluginMessageListener {
 
                 case "GetAllPlayer": {
                     try (ByteArrayOutputStream stream = new ByteArrayOutputStream(); DataOutputStream out = new DataOutputStream(stream)) {
-                        List<Player> allPlayers = new ArrayList<>();
+                        int page = in.readInt();
+                        int size = in.readInt();
+                        TreeMap<String, Player> allPlayers = new TreeMap<>();
                         for (RegisteredServer server : plugin.getProxyServer().getAllServers()) {
-                            allPlayers.addAll(server.getPlayersConnected());
+                            server.getPlayersConnected().forEach(p -> allPlayers.put(p.getUsername(), p));
                         }
-                        List<String> collect = allPlayers.stream().map(p -> {
-                            String username = p.getUsername();
-                            UUID uniqueId = p.getUniqueId();
+
+                        int startIndex = (page - 1) * size;
+                        int endIndex = startIndex + size;
+                        endIndex = Math.min(endIndex, allPlayers.size());
+                        List<Map.Entry<String, Player>> entries = new ArrayList<>(allPlayers.sequencedEntrySet());
+                        if (startIndex < entries.size()) {
+                            entries = entries.subList(startIndex, endIndex);
+                        } else {
+                            entries = new ArrayList<>();
+                        }
+                        
+                        List<String> collect = entries.stream().map(p -> {
+                            String username = p.getKey();
+                            UUID uniqueId = p.getValue().getUniqueId();
                             return username + ":" + uniqueId.toString();
                         }).collect(Collectors.toList());
+                        
                         out.writeInt(collect.size());
                         collect.forEach(s -> {
                             try {
