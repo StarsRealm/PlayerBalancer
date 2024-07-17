@@ -103,4 +103,8 @@ public class PlayerBalancerAddon extends JavaPlugin implements Listener {
     public PluginMessageManager getManager() {
         return manager;
     }
+
+    public RedisEventListener getRedisEventListener() {
+        return redisEventListener;
+    }
 }
