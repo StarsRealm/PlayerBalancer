@@ -19,6 +19,7 @@ import java.util.logging.Level;
 @Getter
 public class PlayerBalancerAddon extends JavaPlugin implements Listener {
     private PluginMessageManager manager;
+    private RedisEventListener redisEventListener;
     private PlayerBalancerPlaceholderExpansion expansion;
     private ConfigurationFile config;
     private String version = "2.3.6";
@@ -27,6 +28,7 @@ public class PlayerBalancerAddon extends JavaPlugin implements Listener {
     public void onEnable() {
         config = new ConfigurationFile(this, "config.yml");
         manager = new PluginMessageManager(this);
+        redisEventListener = new RedisEventListener();
         getServer().getPluginManager().registerEvents(this, this);
 
         getCommand("spb").setExecutor(new MainCommand(this));
@@ -37,9 +39,19 @@ public class PlayerBalancerAddon extends JavaPlugin implements Listener {
         }
     }
 
+    @Override
+    public void onDisable() {
+        try {
+            redisEventListener.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @EventHandler
     public void onLogin(PlayerLoginEvent event) {
         ((CraftPlayer) event.getPlayer()).addChannel(PluginMessageManager.PB_CHANNEL);
+        redisEventListener.setDirty();
     }
 
     public void updateCheck() {

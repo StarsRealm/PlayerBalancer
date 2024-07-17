@@ -152,7 +152,7 @@ public class SectionManager {
         stages.put("section-command-processing", new SectionStage("Section command processing") {
             @Override
             public void execute(String sectionName, SectionProps sectionProps, ServerSection section) throws RuntimeException {
-                if (sectionProps.getCommandProps() != null) {
+                if (sectionProps.getCommandProps() != null && sectionProps.getCommandProps().getName()!=null) {
                     SectionCommand command = new SectionCommand(plugin, section);
                     section.setCommand(command);
                     CommandMeta sectionCommandMeta = plugin.getProxyServer().getCommandManager()

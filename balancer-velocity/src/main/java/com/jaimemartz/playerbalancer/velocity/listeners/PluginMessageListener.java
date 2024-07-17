@@ -267,46 +267,6 @@ public class PluginMessageListener {
 
                     break;
                 }
-
-                case "GetAllPlayer": {
-                    try (ByteArrayOutputStream stream = new ByteArrayOutputStream(); DataOutputStream out = new DataOutputStream(stream)) {
-                        int page = in.readInt();
-                        int size = in.readInt();
-                        TreeMap<String, Player> allPlayers = new TreeMap<>();
-                        for (RegisteredServer server : plugin.getProxyServer().getAllServers()) {
-                            server.getPlayersConnected().forEach(p -> allPlayers.put(p.getUsername(), p));
-                        }
-
-                        int startIndex = page * size;
-                        int endIndex = startIndex + size;
-                        endIndex = Math.min(endIndex, allPlayers.size());
-                        List<Map.Entry<String, Player>> entries = new ArrayList<>(allPlayers.sequencedEntrySet());
-                        if (startIndex < entries.size()) {
-                            entries = entries.subList(startIndex, endIndex);
-                        } else {
-                            entries = new ArrayList<>();
-                        }
-                        
-                        List<String> collect = entries.stream().map(p -> {
-                            String username = p.getKey();
-                            UUID uniqueId = p.getValue().getUniqueId();
-                            return username + ":" + uniqueId.toString();
-                        }).collect(Collectors.toList());
-                        
-                        out.writeInt(collect.size());
-                        collect.forEach(s -> {
-                            try {
-                                out.writeUTF(s);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        });
-                        serverConnection.sendPluginMessage(PlayerBalancer.PB_CHANNEL, stream.toByteArray());
-                        break;
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
             }
         }
     }

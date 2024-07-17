@@ -89,3 +89,17 @@ tasks.withType<JavaCompile>() {
 tasks.withType<Javadoc>() {
     options.encoding = "UTF-8"
 }
+
+tasks.processResources {
+    filteringCharset = Charsets.UTF_8.name()
+    val props = mapOf(
+        "name" to project.name,
+        "version" to project.version,
+        "description" to project.description,
+        "apiVersion" to "1.21"
+    )
+    inputs.properties(props)
+    filesMatching("paper-plugin.yml|plugin.yml") {
+        expand(props)
+    }
+}

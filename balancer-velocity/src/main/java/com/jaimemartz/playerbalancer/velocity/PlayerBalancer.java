@@ -11,11 +11,7 @@ import com.jaimemartz.playerbalancer.velocity.connection.ServerAssignRegistry;
 import com.jaimemartz.playerbalancer.velocity.helper.NetworkManager;
 import com.jaimemartz.playerbalancer.velocity.helper.PasteHelper;
 import com.jaimemartz.playerbalancer.velocity.helper.PlayerLocker;
-import com.jaimemartz.playerbalancer.velocity.listeners.PlayerDisconnectListener;
-import com.jaimemartz.playerbalancer.velocity.listeners.PluginMessageListener;
-import com.jaimemartz.playerbalancer.velocity.listeners.ProxyReloadListener;
-import com.jaimemartz.playerbalancer.velocity.listeners.ServerConnectListener;
-import com.jaimemartz.playerbalancer.velocity.listeners.ServerKickListener;
+import com.jaimemartz.playerbalancer.velocity.listeners.*;
 import com.jaimemartz.playerbalancer.velocity.ping.StatusManager;
 import com.jaimemartz.playerbalancer.velocity.section.SectionManager;
 import com.jaimemartz.playerbalancer.velocity.settings.SettingsHolder;
@@ -67,6 +63,7 @@ public class PlayerBalancer {
     private SettingsHolder settings;
     private SectionManager sectionManager;
     private NetworkManager networkManager;
+    private RedisEventListener redisEventListener;
     private ConfigurationLoader<CommentedConfigurationNode> loader;
 
     private FallbackCommand fallbackCommand;
@@ -192,6 +189,7 @@ public class PlayerBalancer {
                 }
 
                 networkManager = new NetworkManager(this);
+                redisEventListener = new RedisEventListener(this);
 
                 sectionManager = new SectionManager(this);
                 sectionManager.load();
@@ -261,6 +259,10 @@ public class PlayerBalancer {
         if (settings.getGeneralProps().isEnabled()) {
             // Do not try to do anything if the plugin has not loaded correctly
             if (failed) return;
+
+            if (redisEventListener != null) {
+                redisEventListener.close();
+            }
 
             if (settings.getGeneralProps().isAutoReload()) {
                 if (reloadListener != null) {

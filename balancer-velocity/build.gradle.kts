@@ -10,6 +10,7 @@ plugins {
 dependencies {
     api(libs.org.spongepowered.configurate.hocon)
     api(libs.org.bstats.bstats.velocity)
+    implementation("io.lettuce:lettuce-core:6.3.2.RELEASE")
     compileOnly(libs.com.google.guava.guava)
     compileOnly(libs.com.google.inject.guice)
     compileOnly(libs.com.imaginarycode.minecraft.redisbungee)
