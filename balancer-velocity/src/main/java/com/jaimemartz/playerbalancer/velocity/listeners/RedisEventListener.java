@@ -26,8 +26,7 @@ public class RedisEventListener implements AutoCloseable {
             @Override
             public void message(String channel, String message) {
                 if (channel.equals(res)) {
-                    List<Map.Entry<String, UUID>> allServerPlayer = plugin.getServerConnectListener().getAllServerPlayer();
-                    sync.publish(to, gson.toJson(allServerPlayer));
+                    sync.publish(to, gson.toJson(plugin.getServerConnectListener().getAllServerPlayer()));
                 }
             }
 

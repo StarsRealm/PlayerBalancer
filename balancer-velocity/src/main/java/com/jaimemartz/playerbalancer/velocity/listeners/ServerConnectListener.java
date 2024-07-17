@@ -117,8 +117,12 @@ public class ServerConnectListener {
         return section;
     }
 
-    public List<Map.Entry<String, UUID>> getAllServerPlayer() {
-        return playerInfoCache.stream().map(p -> Map.entry(p.getName(), p.getUuid())).toList();
+    public TreeMap<String, UUID> getAllServerPlayer() {
+        TreeMap<String, UUID> map = new TreeMap<>();
+        for (PlayerInfo playerInfo : playerInfoCache) {
+            map.put(playerInfo.getName(), playerInfo.getUuid());
+        }
+        return map;
     }
 
     public void close() {

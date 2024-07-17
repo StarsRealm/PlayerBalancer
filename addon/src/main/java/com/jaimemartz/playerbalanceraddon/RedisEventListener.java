@@ -13,6 +13,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 public class RedisEventListener implements AutoCloseable {
     final RedisClient redisClient;
@@ -20,7 +21,7 @@ public class RedisEventListener implements AutoCloseable {
     public static final String to = "playerbalancer:getallplayer";
     public static final String res = "playerbalancer:setallplayer";
 
-    private static final AtomicReference<List<Map.Entry<String, UUID>>> result = new AtomicReference<>(null);
+    private static final AtomicReference<TreeMap<String, UUID>> result = new AtomicReference<>(null);
     private static final ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
 
     public RedisEventListener() {
@@ -33,7 +34,7 @@ public class RedisEventListener implements AutoCloseable {
             @Override
             public void message(String channel, String message) {
                 if (channel.equals(res)) {
-                    List<Map.Entry<String, UUID>> r = gson.fromJson(message, new TypeToken<>() {
+                    TreeMap<String, UUID> r = gson.fromJson(message, new TypeToken<>() {
                     });
                     result.set(r);
                 }
@@ -80,16 +81,18 @@ public class RedisEventListener implements AutoCloseable {
             }
             int startIndex = page * size;
             int endIndex = startIndex + size;
-            List<Map.Entry<String, UUID>> allPlayers = result.get();
-            if (startIndex < allPlayers.size()) {
-                allPlayers = allPlayers.subList(startIndex, endIndex);
+            TreeMap<String, UUID> allPlayers = result.get();
+            List<Map.Entry<String, UUID>> list = allPlayers.sequencedEntrySet().stream().collect(Collectors.toList());
+            endIndex = Math.min(endIndex, list.size());
+            if (startIndex < list.size()) {
+                list = list.subList(startIndex, endIndex);
             } else {
-                allPlayers = new ArrayList<>();
+                list = new ArrayList<>();
             }
             for (int i = allPlayers.size(); i < size; i++) {
-                allPlayers.add(null);
+                list.add(null);
             }
-            return allPlayers;
+            return list;
         }, executorService);
     }
 
