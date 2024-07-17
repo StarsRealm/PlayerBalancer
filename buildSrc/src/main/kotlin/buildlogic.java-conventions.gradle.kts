@@ -99,8 +99,9 @@ tasks.processResources {
         "description" to project.description,
         "apiVersion" to "1.21"
     )
+    println("Processing resources with $props")
     inputs.properties(props)
-    filesMatching("paper-plugin.yml|plugin.yml") {
+    filesMatching("plugin.yml") {
         expand(props)
     }
 }
