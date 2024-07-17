@@ -75,6 +75,7 @@ publishing {
     publications {
         create<MavenPublication>("gpr") {
             from(project.components["java"])
+            println("Publishing ${project.name} to AliYun-Snapshot")
             groupId = project.group.toString()
             artifactId = project.name.lowercase(Locale.ENGLISH)
             version = project.version.toString()

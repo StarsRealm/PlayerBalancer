@@ -51,7 +51,6 @@ public class PlayerBalancerAddon extends JavaPlugin implements Listener {
     @EventHandler
     public void onLogin(PlayerLoginEvent event) {
         ((CraftPlayer) event.getPlayer()).addChannel(PluginMessageManager.PB_CHANNEL);
-        redisEventListener.setDirty();
     }
 
     public void updateCheck() {

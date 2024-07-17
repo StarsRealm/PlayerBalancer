@@ -26,16 +26,8 @@ public class RedisEventListener implements AutoCloseable {
             @Override
             public void message(String channel, String message) {
                 if (channel.equals(res)) {
-                    TreeMap<String, Player> allPlayers = new TreeMap<>();
-                    for (RegisteredServer server : plugin.getProxyServer().getAllServers()) {
-                        server.getPlayersConnected().forEach(p -> allPlayers.put(p.getUsername(), p));
-                    }
-                    List<String> collect = allPlayers.sequencedEntrySet().stream().map(p -> {
-                        String username = p.getKey();
-                        UUID uniqueId = p.getValue().getUniqueId();
-                        return username + ":" + uniqueId.toString();
-                    }).toList();
-                    sync.publish(to, gson.toJson(collect));
+                    List<Map.Entry<String, UUID>> allServerPlayer = plugin.getServerConnectListener().getAllServerPlayer();
+                    sync.publish(to, gson.toJson(allServerPlayer));
                 }
             }
 

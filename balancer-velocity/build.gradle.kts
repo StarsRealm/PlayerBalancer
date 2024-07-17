@@ -11,6 +11,8 @@ dependencies {
     api(libs.org.spongepowered.configurate.hocon)
     api(libs.org.bstats.bstats.velocity)
     implementation("io.lettuce:lettuce-core:6.3.2.RELEASE")
+    implementation("org.mongodb:mongodb-driver-sync:4.11.2")
+    implementation("dev.morphia.morphia:morphia-core:2.4.16-STARSRELAM-SNAPSHOT")
     compileOnly(libs.com.google.guava.guava)
     compileOnly(libs.com.google.inject.guice)
     compileOnly(libs.com.imaginarycode.minecraft.redisbungee)

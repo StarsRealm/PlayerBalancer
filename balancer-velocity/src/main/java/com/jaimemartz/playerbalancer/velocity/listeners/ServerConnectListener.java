@@ -3,23 +3,62 @@ package com.jaimemartz.playerbalancer.velocity.listeners;
 import com.jaimemartz.playerbalancer.velocity.PlayerBalancer;
 import com.jaimemartz.playerbalancer.velocity.connection.ConnectionIntent;
 import com.jaimemartz.playerbalancer.velocity.connection.ServerAssignRegistry;
+import com.jaimemartz.playerbalancer.velocity.data.PlayerInfo;
 import com.jaimemartz.playerbalancer.velocity.helper.PlayerLocker;
 import com.jaimemartz.playerbalancer.velocity.section.ServerSection;
 import com.jaimemartz.playerbalancer.velocity.utils.MessageUtils;
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.connection.LoginEvent;
 import com.velocitypowered.api.event.player.ServerPreConnectEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
+import dev.morphia.Datastore;
+import dev.morphia.Morphia;
+import dev.morphia.config.MorphiaConfig;
+import org.bson.UuidRepresentation;
 
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class ServerConnectListener {
     private final PlayerBalancer plugin;
+    private final Datastore datastore;
+    private final MongoClient mongoClient;
+    private static final TreeSet<PlayerInfo> playerInfoCache = new TreeSet<>();
 
     public ServerConnectListener(PlayerBalancer plugin) {
         this.plugin = plugin;
+        MongoClientSettings settings = MongoClientSettings.builder()
+                .uuidRepresentation(UuidRepresentation.STANDARD)
+                .applyConnectionString(new ConnectionString("mongodb://root:wyd3#monster@localhost:27017"))
+                .build();
+
+        mongoClient = MongoClients.create(settings);
+        ClassLoader classLoader = ServerConnectListener.class.getClassLoader();
+        Thread.currentThread().setContextClassLoader(classLoader);
+        datastore = Morphia.createDatastore(mongoClient, MorphiaConfig.load(), classLoader);
+        try (var iter = datastore.find(PlayerInfo.class).iterator()) {
+            iter.forEachRemaining(playerInfoCache::add);
+        }
+    }
+
+    @Subscribe
+    public void onJoin(LoginEvent event) {
+        Player player = event.getPlayer();
+        UUID uniqueId = player.getUniqueId();
+        String username = player.getUsername();
+        PlayerInfo build = PlayerInfo.builder().name(username).uuid(uniqueId).build();
+        if (playerInfoCache.contains(build)) {
+            return;
+        }
+        datastore.save(build);
     }
 
     @Subscribe
@@ -76,5 +115,14 @@ public class ServerConnectListener {
         }
 
         return section;
+    }
+
+    public List<Map.Entry<String, UUID>> getAllServerPlayer() {
+        return playerInfoCache.stream().map(p -> Map.entry(p.name(), p.uuid())).toList();
+    }
+
+    public void close() {
+        mongoClient.close();
+        playerInfoCache.clear();
     }
 }

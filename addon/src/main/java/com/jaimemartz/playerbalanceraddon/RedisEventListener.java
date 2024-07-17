@@ -7,7 +7,6 @@ import io.lettuce.core.RedisURI;
 import io.lettuce.core.pubsub.RedisPubSubListener;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 import io.lettuce.core.pubsub.api.sync.RedisPubSubCommands;
-import it.unimi.dsi.fastutil.Pair;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -21,7 +20,7 @@ public class RedisEventListener implements AutoCloseable {
     public static final String to = "playerbalancer:getallplayer";
     public static final String res = "playerbalancer:setallplayer";
 
-    private static final AtomicReference<List<Pair<String, UUID>>> result = new AtomicReference<>(null);
+    private static final AtomicReference<List<Map.Entry<String, UUID>>> result = new AtomicReference<>(null);
     private static final ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
 
     public RedisEventListener() {
@@ -34,14 +33,8 @@ public class RedisEventListener implements AutoCloseable {
             @Override
             public void message(String channel, String message) {
                 if (channel.equals(res)) {
-                    List<String> strings = gson.fromJson(message, new TypeToken<>() {
+                    List<Map.Entry<String, UUID>> r = gson.fromJson(message, new TypeToken<>() {
                     });
-                    List<Pair<String, UUID>> r = strings.stream().map(p -> {
-                        String[] split = p.split(":");
-                        String name = split[0];
-                        UUID uuid = UUID.fromString(split[1]);
-                        return Pair.of(name, uuid);
-                    }).toList();
                     result.set(r);
                 }
             }
@@ -74,11 +67,9 @@ public class RedisEventListener implements AutoCloseable {
         sync.subscribe(res);
     }
 
-    public CompletableFuture<List<Pair<String, UUID>>> getAllServerPlayer(int page, int size) {
+    public CompletableFuture<List<Map.Entry<String, UUID>>> getAllServerPlayer(int page, int size) {
         final RedisPubSubCommands<String, String> sync = connection.sync();
-        if (result.get() == null) {
-            sync.publish(to, "");
-        }
+        sync.publish(to, "");
         return CompletableFuture.supplyAsync(() -> {
             while (result.get() == null) {
                 try {
@@ -89,21 +80,17 @@ public class RedisEventListener implements AutoCloseable {
             }
             int startIndex = page * size;
             int endIndex = startIndex + size;
-            List<Pair<String, UUID>> allPlayers = result.get();
-            endIndex = Math.min(endIndex, allPlayers.size());
+            List<Map.Entry<String, UUID>> allPlayers = result.get();
             if (startIndex < allPlayers.size()) {
                 allPlayers = allPlayers.subList(startIndex, endIndex);
             } else {
                 allPlayers = new ArrayList<>();
             }
+            for (int i = allPlayers.size(); i < size; i++) {
+                allPlayers.add(null);
+            }
             return allPlayers;
         }, executorService);
-    }
-
-    public void setDirty() {
-        final RedisPubSubCommands<String, String> sync = connection.sync();
-        result.set(null);
-        sync.publish(to, "");
     }
 
     @Override

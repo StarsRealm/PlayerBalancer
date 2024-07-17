@@ -69,7 +69,8 @@ public class PlayerBalancer {
     private FallbackCommand fallbackCommand;
     private SimpleCommand mainCommand, manageCommand;
     private CommandMeta mainCommandMeta, manageCommandMeta, fallbackCommandMeta;
-    private Object connectListener, kickListener, reloadListener, pluginMessageListener;
+    private ServerConnectListener serverConnectListener;
+    private Object kickListener, reloadListener, pluginMessageListener;
 
     public static final LegacyChannelIdentifier PB_CHANNEL = new LegacyChannelIdentifier("playerbalancer:main");
 
@@ -210,8 +211,8 @@ public class PlayerBalancer {
                     commandManager.register(fallbackCommandMeta, fallbackCommand);
                 }
 
-                connectListener = new ServerConnectListener(this);
-                proxyServer.getEventManager().register(this, connectListener);
+                serverConnectListener = new ServerConnectListener(this);
+                proxyServer.getEventManager().register(this, serverConnectListener);
 
                 if (settings.getGeneralProps().isPluginMessaging()) {
                     proxyServer.getChannelRegistrar().register(PB_CHANNEL);
@@ -291,9 +292,10 @@ public class PlayerBalancer {
                 }
             }
 
-            if (connectListener != null) {
-                proxyServer.getEventManager().unregisterListener(this, connectListener);
-                connectListener = null;
+            if (serverConnectListener != null) {
+                serverConnectListener.close();
+                proxyServer.getEventManager().unregisterListener(this, serverConnectListener);
+                serverConnectListener = null;
             }
 
             if (settings.getGeneralProps().isPluginMessaging()) {
