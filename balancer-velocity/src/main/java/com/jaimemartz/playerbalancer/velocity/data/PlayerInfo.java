@@ -5,17 +5,12 @@ import dev.morphia.annotations.Id;
 import dev.morphia.annotations.IndexOptions;
 import dev.morphia.annotations.Indexed;
 import lombok.*;
-import lombok.experimental.Accessors;
-import lombok.extern.jackson.Jacksonized;
 import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
 @Entity("player_info")
-@Accessors(fluent = true)
-@Jacksonized
-@Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

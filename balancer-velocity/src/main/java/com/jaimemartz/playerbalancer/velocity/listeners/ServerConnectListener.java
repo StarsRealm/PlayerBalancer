@@ -54,7 +54,7 @@ public class ServerConnectListener {
         Player player = event.getPlayer();
         UUID uniqueId = player.getUniqueId();
         String username = player.getUsername();
-        PlayerInfo build = PlayerInfo.builder().name(username).uuid(uniqueId).build();
+        PlayerInfo build = new PlayerInfo(null, username, uniqueId);
         if (playerInfoCache.contains(build)) {
             return;
         }
@@ -118,7 +118,7 @@ public class ServerConnectListener {
     }
 
     public List<Map.Entry<String, UUID>> getAllServerPlayer() {
-        return playerInfoCache.stream().map(p -> Map.entry(p.name(), p.uuid())).toList();
+        return playerInfoCache.stream().map(p -> Map.entry(p.getName(), p.getUuid())).toList();
     }
 
     public void close() {
