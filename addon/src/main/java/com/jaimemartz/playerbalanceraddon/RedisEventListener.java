@@ -89,7 +89,7 @@ public class RedisEventListener implements AutoCloseable {
             } else {
                 list = new ArrayList<>();
             }
-            for (int i = allPlayers.size(); i < size; i++) {
+            for (int i = list.size(); i < size; i++) {
                 list.add(null);
             }
             return list;
