@@ -7,8 +7,10 @@ import com.velocitypowered.api.proxy.server.RegisteredServer;
 import io.lettuce.core.*;
 import io.lettuce.core.pubsub.RedisPubSubListener;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
+import io.lettuce.core.pubsub.api.async.RedisPubSubAsyncCommands;
 import io.lettuce.core.pubsub.api.sync.RedisPubSubCommands;
 
+import java.time.Duration;
 import java.util.*;
 
 public class RedisEventListener implements AutoCloseable {
@@ -18,15 +20,15 @@ public class RedisEventListener implements AutoCloseable {
     public static final String to = "playerbalancer:setallplayer";
 
     public RedisEventListener(PlayerBalancer plugin) {
-        redisClient = RedisClient.create(RedisURI.create("redis://localhost"));
+        redisClient = RedisClient.create(RedisURI.builder(RedisURI.create("redis://localhost")).withTimeout(Duration.ofSeconds(3)).build());
         connection = redisClient.connectPubSub();
-        final RedisPubSubCommands<String, String> sync = connection.sync();
+        final RedisPubSubAsyncCommands<String, String> async = connection.async();
         final Gson gson = new Gson();
         connection.addListener(new RedisPubSubListener<>() {
             @Override
             public void message(String channel, String message) {
                 if (channel.equals(res)) {
-                    sync.publish(to, gson.toJson(plugin.getServerConnectListener().getAllServerPlayer()));
+                    async.publish(to, gson.toJson(plugin.getServerConnectListener().getAllServerPlayer()));
                 }
             }
 
@@ -56,7 +58,7 @@ public class RedisEventListener implements AutoCloseable {
             }
         });
 
-        sync.subscribe(res);
+        async.subscribe(res);
     }
 
     @Override

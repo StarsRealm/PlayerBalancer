@@ -1,13 +1,16 @@
 package com.jaimemartz.playerbalanceraddon;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.RedisURI;
 import io.lettuce.core.pubsub.RedisPubSubListener;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
+import io.lettuce.core.pubsub.api.async.RedisPubSubAsyncCommands;
 import io.lettuce.core.pubsub.api.sync.RedisPubSubCommands;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -25,18 +28,22 @@ public class RedisEventListener implements AutoCloseable {
     private static final ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
 
     public RedisEventListener() {
-        redisClient = RedisClient.create(RedisURI.create("redis://localhost"));
+        redisClient = RedisClient.create(RedisURI.builder(RedisURI.create("redis://localhost")).withTimeout(Duration.ofSeconds(3)).build());
         connection = redisClient.connectPubSub();
         final Gson gson = new Gson();
-        final RedisPubSubCommands<String, String> sync = connection.sync();
+        final RedisPubSubAsyncCommands<String, String> async = connection.async();
 
         connection.addListener(new RedisPubSubListener<>() {
             @Override
             public void message(String channel, String message) {
                 if (channel.equals(res)) {
-                    TreeMap<String, UUID> r = gson.fromJson(message, new TypeToken<>() {
-                    });
-                    result.set(r);
+                    try {
+                        TreeMap<String, UUID> r = gson.fromJson(message, new TypeToken<>() {
+                        });
+                        result.set(r);
+                    } catch (JsonSyntaxException ignore) {
+                        result.set(null);
+                    }
                 }
             }
 
@@ -65,7 +72,7 @@ public class RedisEventListener implements AutoCloseable {
 
             }
         });
-        sync.subscribe(res);
+        async.subscribe(res);
     }
 
     public CompletableFuture<List<Map.Entry<String, UUID>>> getAllServerPlayer(int page, int size) {
