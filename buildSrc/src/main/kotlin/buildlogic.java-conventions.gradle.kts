@@ -91,6 +91,10 @@ tasks.withType<Javadoc>() {
     options.encoding = "UTF-8"
 }
 
+tasks.build {
+    dependsOn("shadowJar")
+}
+
 tasks.processResources {
     filteringCharset = Charsets.UTF_8.name()
     val props = mapOf(
