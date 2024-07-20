@@ -96,6 +96,21 @@ public class RedisEventListener implements AutoCloseable {
         }, executorService);
     }
 
+    public CompletableFuture<TreeMap<String, UUID>> getAllServerPlayer() {
+        final RedisPubSubCommands<String, String> sync = connection.sync();
+        sync.publish(to, "");
+        return CompletableFuture.supplyAsync(() -> {
+            while (result.get() == null) {
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            return result.get();
+        }, executorService);
+    }
+
     @Override
     public void close() throws Exception {
         connection.close();
