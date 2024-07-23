@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="lobby" type="JarApplication">
+    <option name="JAR_PATH" value="$USER_HOME$/Downloads/qiqibaba/starelams/mc-lobby/nylon-paperclip-mojmap.jar" />
+    <option name="VM_PARAMETERS" value="-Ddisable.watchdog=true" />
+    <option name="PROGRAM_PARAMETERS" value="-nogui" />
+    <option name="WORKING_DIRECTORY" value="C:\Users\15425\Downloads\qiqibaba\starelams\mc-lobby" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <method v="2" />
+  </configuration>
+</component>

@@ -13,7 +13,9 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.LoginEvent;
+import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.event.player.ServerPreConnectEvent;
+import com.velocitypowered.api.network.DimensionInfo;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
@@ -32,6 +34,7 @@ public class ServerConnectListener {
     private final Datastore datastore;
     private final MongoClient mongoClient;
     private static final TreeSet<PlayerInfo> playerInfoCache = new TreeSet<>();
+    private static final HashMap<UUID, String> playerSpecificWorldMap = new HashMap<>();
 
     public ServerConnectListener(PlayerBalancer plugin) {
         this.plugin = plugin;
@@ -58,7 +61,21 @@ public class ServerConnectListener {
         if (playerInfoCache.contains(build)) {
             return;
         }
+        playerInfoCache.add(build);
         datastore.save(build);
+    }
+
+    public void setPlayerSpecificWorld(Player player, String worldName) {
+        playerSpecificWorldMap.putIfAbsent(player.getUniqueId(), worldName);
+    }
+
+    @Subscribe
+    public void onServerConnect(ServerConnectedEvent event) {
+        Player player = event.getPlayer();
+        if (playerSpecificWorldMap.containsKey(player.getUniqueId())) {
+            String worldName = playerSpecificWorldMap.remove(player.getUniqueId());
+            event.setDimensionInfo(new DimensionInfo("", "minecraft:" + worldName, false, false, player.getProtocolVersion()));
+        }
     }
 
     @Subscribe

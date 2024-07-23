@@ -5,7 +5,6 @@
 com-google-guava-guava = "32.0.0-jre"
 com-google-inject-guice = "6.0.0"
 com-imaginarycode-minecraft-redisbungee = "0.6.5-SNAPSHOT"
-com-velocitypowered-velocity-api = "3.2.0-SNAPSHOT"
 com-velocitypowered-velocity-api-x1 = "3.3.0-SNAPSHOT"
 de-simonsator-bungeecordpartyandfriends = "1.0.86"
 de-simonsator-velocitypoweredpartyandfriends = "1.0.91"
@@ -22,7 +21,6 @@ org-spongepowered-configurate-hocon = "3.7.3"
 com-google-guava-guava = { module = "com.google.guava:guava", version.ref = "com-google-guava-guava" }
 com-google-inject-guice = { module = "com.google.inject:guice", version.ref = "com-google-inject-guice" }
 com-imaginarycode-minecraft-redisbungee = { module = "com.imaginarycode.minecraft:RedisBungee", version.ref = "com-imaginarycode-minecraft-redisbungee" }
-com-velocitypowered-velocity-api = { module = "com.velocitypowered:velocity-api", version.ref = "com-velocitypowered-velocity-api" }
 com-velocitypowered-velocity-api-x1 = { module = "com.velocitypowered:velocity-api", version.ref = "com-velocitypowered-velocity-api-x1" }
 de-simonsator-bungeecordpartyandfriends = { module = "de.simonsator:BungeecordPartyAndFriends", version.ref = "de-simonsator-bungeecordpartyandfriends" }
 de-simonsator-velocitypoweredpartyandfriends = { module = "de.simonsator:VelocityPoweredPartyAndFriends", version.ref = "de-simonsator-velocitypoweredpartyandfriends" }

@@ -60,6 +60,14 @@ public class PluginMessageManager implements PluginMessageListener {
         player.sendPluginMessage(plugin, PB_CHANNEL, out.toByteArray());
     }
 
+    public void connectPlayerSpecificWorld(Player player, String section, String world) {
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF("ConnectSpecificWorld");
+        out.writeUTF(section);
+        out.writeUTF(world);
+        player.sendPluginMessage(plugin, PB_CHANNEL, out.toByteArray());
+    }
+
     public void fallbackPlayer(Player player) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("FallbackPlayer");

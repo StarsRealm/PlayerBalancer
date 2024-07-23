@@ -62,6 +62,20 @@ public class PluginMessageListener {
                     break;
                 }
 
+                case "ConnectSpecificWorld": {
+                    if (event.getTarget() instanceof Player) {
+                        Player player = (Player) event.getTarget();
+                        ServerSection section = plugin.getSectionManager().getByName(in.readUTF());
+
+                        if (section == null)
+                            break;
+
+                        plugin.getServerConnectListener().setPlayerSpecificWorld(player, in.readUTF());
+                        ConnectionIntent.simple(plugin, player, section);
+                    }
+                    break;
+                }
+
                 case "ConnectOther": {
                     Optional<Player> player = plugin.getProxyServer().getPlayer(in.readUTF());
 

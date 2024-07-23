@@ -24,12 +24,23 @@ public class MainCommand implements CommandExecutor {
                         if (args.length >= 2) {
                             String input = args[1];
                             if (args.length >= 3) {
-                                Player player = plugin.getServer().getPlayer(args[2]);
-                                if (player != null) {
-                                    plugin.getManager().connectPlayer(player, input);
-                                    sender.sendMessage(Color.translate(plugin.getConfig().getString("RequestSent")));
+                                if (args.length >= 4) {
+                                    Player player = plugin.getServer().getPlayer(args[2]);
+                                    String worldName = args[3];
+                                    if (player != null && worldName != null) {
+                                        plugin.getManager().connectPlayerSpecificWorld(player, input, worldName);
+                                        sender.sendMessage(Color.translate(plugin.getConfig().getString("RequestSent")));
+                                    } else {
+                                        sender.sendMessage(Color.translate(plugin.getConfig().getString("NoPlayer")));
+                                    }
                                 } else {
-                                    sender.sendMessage(Color.translate(plugin.getConfig().getString("NoPlayer")));
+                                    Player player = plugin.getServer().getPlayer(args[2]);
+                                    if (player != null) {
+                                        plugin.getManager().connectPlayer(player, input);
+                                        sender.sendMessage(Color.translate(plugin.getConfig().getString("RequestSent")));
+                                    } else {
+                                        sender.sendMessage(Color.translate(plugin.getConfig().getString("NoPlayer")));
+                                    }
                                 }
                             } else {
                                 if (sender instanceof Player) {
